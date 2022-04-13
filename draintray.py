@@ -26,26 +26,28 @@ importlib.reload(scad)
 from scad import (obj_union, reset_blend, active, obj_diff, cylinder, cube, z_min, x_min,
     z_max_to, x_max_to, x_max, rotate, vert_filter, obj_join, clear_plane, z_max,
     z_min_to, mirror_z, x_min_to, x_mid_to, bevel, rotate_around_cursor, z_mid_to,
-    set_default_verticies,
+    set_default_verticies, get_global_verticies, remove,
                   )
 
 import datetime
 
 reset_blend()
+set_default_verticies(32)
+
 
 # measurements in mm
-diameter = 4.5*25.4 # 4.5 inches
+diameter = 6*25.4 # 4.5 inches
 hole_diameter = 6
 hole_radius = hole_diameter/2
 
 radius = diameter / 2
 
 # choosen
-tray_depth = 18
-floor_thickness = 2.5
+tray_depth = 10
+floor_thickness = 2
 wall_thickness = hole_diameter + 2*floor_thickness
 
-n_holes = 9
+n_holes = 3
 n_ridges = 3
 sigma =0.1
 
@@ -123,27 +125,41 @@ print('add ridges')
 ridges = []
 for i in range(n_ridges):
     ridge = cylinder(
-    depth=((radius - less_than_radius)),
-    radius=floor_thickness * .8,
-    )
+        depth=((radius - less_than_radius)),
+        radius=floor_thickness * .8,
+        )
 
     rotate(ridge, 1, rads=(pi/2))
     x_min_to(ridge, less_than_radius/2)
     rotate_around_cursor(ridge, ((2*pi)/n_ridges) * i + ridge_offset, 2)
     z_mid_to(ridge, floor_thickness)
     ridges.append(ridge)
+    #obj_union(obj, ridge)
 
 print('join ridges')
-obj = obj_join([obj, *ridges])
+obj_union(obj, obj_join(ridges))
+print('joined')
 
-bevel(obj)
 
-
-def remove(obj):
-    bpy.data.objects.remove(obj, do_unlink=True)
 
 z_min_to(obj, 0)
 remove(h3)
 remove(neg_hole)
+
+bpy.ops.object.mode_set(mode = 'EDIT')
+bpy.ops.mesh.select_mode(type='VERT')
+bpy.ops.mesh.select_all(action = 'DESELECT')
+bpy.ops.object.mode_set(mode = 'OBJECT')
+
+print('selcting top vertices')
+for (i, v) in enumerate(get_global_verticies(obj)):
+    if (v[2] > sigma):
+        obj.data.vertices[i].select = True
+
+bpy.ops.object.mode_set(mode = 'EDIT')
+print('beveling top verts')
+bpy.ops.mesh.bevel(offset=.5,
+                   segments=4,
+                   affect='EDGES')
 
 print('processed @ ', datetime.datetime.now())
