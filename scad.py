@@ -56,6 +56,31 @@ def rotate(obj, axis, rads):
     obj.rotation_euler[axis] = rads
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
+
+axes_from_index = ('X', 'Y', 'Z')
+
+#https://blender.stackexchange.com/a/7603
+def rotate_around_cursor(obj, rads, axis):
+    rot_mat = Matrix.Rotation(rads, 4, axes_from_index[axis])
+
+    cursor_loc = bpy.context.scene.cursor.matrix
+
+    m = (cursor_loc @ rot_mat @ cursor_loc.inverted())
+    obj.matrix_world = m @ obj.matrix_world
+
+def bevel(obj, offset=1.2, segments=3, affect='EDGES', **kwargs):
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.view_layer.objects.active = obj
+
+    bpy.ops.object.mode_set(mode = 'EDIT')
+    bpy.ops.mesh.bevel(offset=offset,
+                       segments=segments,
+                       affect=affect,
+                       **kwargs)
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+
+
+
 def mirror_axis_i(i):
     bpy.ops.object.duplicate()
     bpy.context.object.location[i] = -bpy.context.object.location[i]
