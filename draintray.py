@@ -163,3 +163,8 @@ bpy.ops.mesh.bevel(offset=.5,
                    affect='EDGES')
 
 print('processed @ ', datetime.datetime.now())
+print('save')
+obj.select_set(True)
+bpy.ops.export_mesh.stl(filepath='/home/blake/git/mason-blend/draintray.stl',
+                        use_selection=True,
+                        )
