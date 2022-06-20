@@ -123,37 +123,37 @@ def z_min(obj):
 def z_max(obj):
     return extreme_coordinates(obj)[2][1]
 
-def axis_extreme_to(obj, axis, extreme, target):
+def axis_extreme_to(obj, axis: int, extreme: int, target: float):
     bpy.ops.object.mode_set(mode = 'EDIT')
     ext_value = extreme_coordinates(obj)[axis][extreme]
     obj.location[axis] = (obj.location[axis] + target - ext_value)
     bpy.ops.object.mode_set(mode = 'OBJECT')
     return active()
 
-def axis_mid_to(obj, axis, target):
+def axis_mid_to(obj, axis: int, target: float):
     [min_, max_] = extreme_coordinates(obj)[axis]
     length = max_ - min_
     axis_extreme_to(obj, axis, 0, target - length/2)
 
-def x_min_to(obj, x=0):
+def x_min_to(obj, x: float =0):
     axis_extreme_to(obj, 0, 0, x)
-def x_max_to(obj, x=0):
+def x_max_to(obj, x: float =0):
     axis_extreme_to(obj, 0, 1, x)
-def x_mid_to(obj, x=0):
+def x_mid_to(obj, x: float =0):
     return axis_mid_to(obj, 0, x)
 
-def y_min_to(obj, y=0):
+def y_min_to(obj, y: float =0):
     axis_extreme_to(obj, 1, 0, y)
-def y_max_to(obj, y=0):
+def y_max_to(obj, y: float =0):
     axis_extreme_to(obj, 1, 1, y)
-def y_mid_to(obj, y=0):
+def y_mid_to(obj, y: float =0):
     return axis_mid_to(obj, 1, y)
 
-def z_min_to(obj, z=0):
+def z_min_to(obj, z: float =0):
     axis_extreme_to(obj, 2, 0, z)
-def z_max_to(obj, z=0):
+def z_max_to(obj, z: float =0):
     axis_extreme_to(obj, 2, 1, z)
-def z_mid_to(obj, z=0):
+def z_mid_to(obj, z: float =0):
     return axis_mid_to(obj, 2, z)
 
 def x_min(obj):
