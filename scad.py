@@ -193,13 +193,14 @@ def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 
                                         location=location,
                                         scale=scale,
                                         enter_editmode=False, align='WORLD',
+                                        vertices=vertices,
                                         )
     return active()
 
 def cube(size=2, location=(0, 0, 0),
-         length=1,
-         width=1,
-         height=1,
+         length: float =1,
+         width: float =1,
+         height: float =1,
          ):
     bpy.ops.mesh.primitive_cube_add(
         size=size,
