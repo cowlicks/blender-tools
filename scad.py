@@ -38,6 +38,19 @@ def obj_intersect(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_s
     if remove_other:
         bpy.data.objects.remove(b_obj, do_unlink=True)
 
+def obj_union(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=True):
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.view_layer.objects.active = a_obj
+    bpy.ops.object.modifier_add(type='BOOLEAN')
+    bpy.context.object.modifiers['Boolean'].operation = 'UNION'
+    bpy.context.object.modifiers['Boolean'].use_hole_tolerant = use_hole_tolerant
+    bpy.context.object.modifiers['Boolean'].use_self = use_self
+    bpy.context.object.modifiers["Boolean"].object = b_obj
+    bpy.ops.object.modifier_apply(modifier="Boolean")
+    if remove_other:
+        bpy.data.objects.remove(b_obj, do_unlink=True)
+
+
 def rotate(obj, axis, rads):
     bpy.ops.object.mode_set(mode = 'EDIT')
     obj.rotation_euler[axis] = rads
