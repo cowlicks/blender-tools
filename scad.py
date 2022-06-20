@@ -172,7 +172,22 @@ def obj_join(objs):
     return active()
 
 
-def cylinder(radius=1, depth=1, location=(0, 0, 0), scale=(1, 1, 1)):
+def select_edges_filter(obj, filter_func):
+    bpy.ops.object.mode_set(mode = 'EDIT') 
+    bpy.ops.mesh.select_mode(type="EDGE")
+    bpy.ops.mesh.select_all(action = 'DESELECT')
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+    for edge in obj.data.edges:
+        if filter_func(edge):
+            edge.select = True
+    bpy.ops.object.mode_set(mode = 'EDIT') 
+
+DEFAULT_CYLINDER_VERTICES = 256
+def set_default_verticies(x: int = 32):
+    global DEFAULT_CYLINDER_VERTICES
+    DEFAULT_CYLINDER_VERTICES = x
+
+def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 1, 1), vertices=DEFAULT_CYLINDER_VERTICES):
     bpy.ops.mesh.primitive_cylinder_add(radius=radius,
                                         depth=depth,
                                         location=location,
