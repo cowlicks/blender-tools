@@ -1,9 +1,15 @@
+from mathutils import Matrix
 import bpy
 
+from math import cos, sin, pi
 def reset_blend():
     for o in bpy.data.objects:
         print(f'removing existing object named: {o.name}')
         bpy.data.objects.remove(o, do_unlink=True)
+
+
+def remove(obj):
+    bpy.data.objects.remove(obj, do_unlink=True)
 
 def active():
     return bpy.context.object
