@@ -216,8 +216,16 @@ def clear_plane(obj, axis: int, sign: bool, plane_location=0, size=1000):
     axis_extreme_to(c, axis, int(sign), plane_location)
     obj_diff(obj, c)
 
-#if __name__ == '__main__':
+def cart_from_cylinder_coords(radius: float =0, radians: float =0, z: float =0):
+    x = cos(radians) * radius
+    y = sin(radians) * radius
+    return x, y, z
+
+
+def duplicate(obj):
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    bpy.ops.object.duplicate()
+    return active()
+
 reset_blend()
-s=100
-cube(length=s, width=s, height=s)
-    
