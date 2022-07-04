@@ -1,7 +1,14 @@
+'''Tools for building models with Blender's Python API'''
 from mathutils import Matrix
 import bpy
 
 from math import cos, sin, pi
+import os
+
+def export_stl(name, location=None):
+    location = location or os.path.join(os.path.dirname(os.path.realpath(__file__)), f'{name}.stl')
+    bpy.ops.export_mesh.stl(filepath=location)
+
 def reset_blend():
     for o in bpy.data.objects:
         print(f'removing existing object named: {o.name}')
