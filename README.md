@@ -29,6 +29,7 @@ cube(size=25)
 # save the cube
 export_stl('my-cube')
 ```
+![image](https://user-images.githubusercontent.com/598099/177218836-20391fe6-a1c9-4ba8-8bfc-d7e6adf0afa6.png)
 
 
 Then go to "Scripting" tab. On the right hand side of the "Editor" panel should see the LiveLink side tab (you may need to expand the tab). There you can execute the script, or click "Start LiveLink" to have it run automatically on save.
