@@ -29,10 +29,32 @@ cube(size=25)
 # save the cube
 export_stl('my-cube')
 ```
+
+
+Then go to "Scripting" tab. On the right hand side of the "Editor" panel should see the LiveLink side tab (you may need to expand the tab). There you can execute the script, or click "Start LiveLink" to have it run automatically on save. Shown below:
 ![image](https://user-images.githubusercontent.com/598099/177218836-20391fe6-a1c9-4ba8-8bfc-d7e6adf0afa6.png)
 
+If you'd like to edit the `scad.py` file (or any other file) and have its changes take effect on the fly, you can add this prelude to your model script.
+```python
+import sys
+# add the local directory to sys.path (so modules in '.' can be imported
+# since we reload this file, don't re-add '.' if its already in sys.path
+if ('.' not in sys.path):
+    sys.path.append('.')
 
-Then go to "Scripting" tab. On the right hand side of the "Editor" panel should see the LiveLink side tab (you may need to expand the tab). There you can execute the script, or click "Start LiveLink" to have it run automatically on save.
+'''NB: the order is important. we import scad first, then reload it, so when
+the the functions are imported from scad they are imported from the reloaded
+module.
+'''
+# the local module
+import scad
+import importlib
+# reload local module since we reload this interactively
+importlib.reload(scad)
+
+# finally re-load functions from the reloaded module
+from scad import * # or whatever your named functions are
+```
 
 # Why?
 
