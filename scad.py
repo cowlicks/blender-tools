@@ -220,6 +220,14 @@ def cube(size=2, location=(0, 0, 0),
     )
     return active()
 
+
+def tube(outer_diameter: float, inner_diameter: float, length: float):
+    obj = cylinder(radius=outer_diameter/2, depth=length)
+    obj_diff(obj,
+             cylinder(radius=inner_diameter/2, depth=length*2),
+             )
+    return obj
+
 def clear_plane(obj, axis: int, sign: bool, plane_location=0, size=1000):
     c = cube(length=size, width=size, height=size)
     axis_extreme_to(c, axis, int(sign), plane_location)
