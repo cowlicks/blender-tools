@@ -189,12 +189,14 @@ def select_edges_filter(obj, filter_func):
             edge.select = True
     bpy.ops.object.mode_set(mode = 'EDIT') 
 
+# setting this is the way to change default verts
 DEFAULT_CYLINDER_VERTICES = 256
 def set_default_verticies(x: int = 32):
     global DEFAULT_CYLINDER_VERTICES
     DEFAULT_CYLINDER_VERTICES = x
 
-def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 1, 1), vertices=DEFAULT_CYLINDER_VERTICES):
+def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 1, 1), vertices=None):
+    vertices = vertices or DEFAULT_CYLINDER_VERTICES
     bpy.ops.mesh.primitive_cylinder_add(radius=radius,
                                         depth=depth,
                                         location=location,
