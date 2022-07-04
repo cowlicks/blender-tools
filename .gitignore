@@ -166,3 +166,4 @@ cython_debug/
 
 *.stl
 *.gcode
+mason-circle.py
