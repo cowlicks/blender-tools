@@ -37,11 +37,26 @@ import datetime
 reset_blend()
 set_default_verticies(128)
 
-lens_id = 57.1
-#skin_depth= 1.6
-skin_depth= 1.6
+thing_name = 'lens-cap'
+
+# mamiya press f3.5 100mm
+#lens_id = 57.1         # front
+#skin_depth= 1.6        # front
+#lens_cap_depth=8.4     # front
+#lens_id = 77.6         # back
+#skin_depth= 2.7        # back
+#lens_cap_depth=14.4    # back
+lens_id = 77.7         # back
+skin_depth= 2.7        # back
+skin_depth= 2
+lens_cap_depth=14.4    # back
+
 lens_od = lens_id + skin_depth*2
-lens_cap_depth=8.4
+
+import os
+def export_stl(name=thing_name, location=None):
+    location = location or os.path.join(os.path.dirname(os.path.realpath(__file__)), f'{thing_name}.stl')
+    bpy.ops.export_mesh.stl(filepath=location)
 
 def tube(outer_diameter: float, inner_diameter: float, length: float):
     obj = cylinder(radius=outer_diameter/2, depth=length)
@@ -57,8 +72,10 @@ z_min_to(out_obj, 0)
 z_min_to(in_obj, skin_depth)
 obj_diff(out_obj, in_obj)
 
-eh_thickness = skin_depth*1.4
+eh_thickness_factor = 1.4
+eh_thickness = skin_depth*eh_thickness_factor
 eh_diameter = lens_cap_depth*2 - eh_thickness
+
 
 # hole for attachments
 eye_hole = tube(outer_diameter=eh_diameter, inner_diameter=eh_diameter-eh_thickness*2, length=eh_thickness)
@@ -85,3 +102,5 @@ rotate_around_cursor(other_eye2, 2*pi*(1/3), 2)
 other_eye3 = duplicate(other_eye2)
 rotate_around_cursor(other_eye3, 2*pi*(1/3), 2)
 obj_join([out_obj, eye_hole, other_eye2, other_eye3])
+
+export_stl()
