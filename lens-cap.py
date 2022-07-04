@@ -4,42 +4,16 @@ from pprint import pprint as print
 This should be copied and pasted into the script you are writing to enable live reloading of this script, and the scad library.
 '''
 
-from math import cos, sin, pi
-import bpy, bmesh
-
-import sys
-# add the local directory to sys.path (so modules in '.' can be imported
-# since we reload this file, don't re-add '.' if its already in sys.path
-if ('.' not in sys.path):
-    sys.path.append('.')
-
-'''NB: the order is important. we import scad first, then reload it, so when
-the the functions are imported from scad they are imported from the reloaded
-module.
-'''
-# the local module
-import scad
-import importlib
-# reload local module since we reload this interactively
-importlib.reload(scad)
-
-# re-load functions from the reloaded module
-from scad import (obj_union, reset_blend, active, obj_diff, cylinder, cube, z_min, x_min,
-    z_max_to, x_max_to, x_max, rotate, vert_filter, obj_join, clear_plane, z_max,
-    z_min_to, mirror_z, x_min_to, x_mid_to, bevel, rotate_around_cursor, z_mid_to,
-    y_min_to, y_max_to, select_edges_filter,
-    set_default_verticies, get_global_verticies, remove,
-    duplicate,
-                  )
-
-import datetime
-
+from math import pi
+from scad import (reset_blend, obj_diff, cylinder, cube, z_max_to, rotate,
+                  obj_join, z_min_to, x_mid_to, rotate_around_cursor,
+                  set_default_verticies, duplicate, tube, export_stl)
 reset_blend()
 set_default_verticies(128)
 
 thing_name = 'lens-cap'
 
-# mamiya press f3.5 100mm
+# mamiya press f3.5 100mm measurements for front and back
 #lens_id = 57.1         # front
 #skin_depth= 1.6        # front
 #lens_cap_depth=8.4     # front
@@ -52,18 +26,6 @@ skin_depth= 2
 lens_cap_depth=14.4    # back
 
 lens_od = lens_id + skin_depth*2
-
-import os
-def export_stl(name=thing_name, location=None):
-    location = location or os.path.join(os.path.dirname(os.path.realpath(__file__)), f'{thing_name}.stl')
-    bpy.ops.export_mesh.stl(filepath=location)
-
-def tube(outer_diameter: float, inner_diameter: float, length: float):
-    obj = cylinder(radius=outer_diameter/2, depth=length)
-    obj_diff(obj,
-             cylinder(radius=inner_diameter/2, depth=length*2),
-             )
-    return obj
 
 # main cover
 out_obj = cylinder(radius=lens_od/2, depth=lens_cap_depth)
@@ -103,4 +65,4 @@ other_eye3 = duplicate(other_eye2)
 rotate_around_cursor(other_eye3, 2*pi*(1/3), 2)
 obj_join([out_obj, eye_hole, other_eye2, other_eye3])
 
-export_stl()
+export_stl(thing_name)
