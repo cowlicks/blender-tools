@@ -38,7 +38,7 @@ set_default_verticies(128)
 
 
 # measurements in mm
-diameter = 125
+diameter = 175
 hole_diameter = 6
 hole_radius = hole_diameter/2
 
@@ -119,13 +119,14 @@ ridges = []
 for i in range(n_ridges):
     ridge = cylinder(
         depth=((radius - less_than_radius)),
-        radius=floor_thickness * .8,
+        radius=floor_thickness * 2,
         )
 
     rotate(ridge, 1, rads=(pi/2))
     x_min_to(ridge, less_than_radius/2)
     rotate_around_cursor(ridge, ((2*pi)/n_ridges) * i + ridge_offset, 2)
     z_mid_to(ridge, floor_thickness)
+    clear_plane(ridge, 2, True, plane_location=sigma)
     ridges.append(ridge)
 
 print('join ridges')
