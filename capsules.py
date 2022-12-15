@@ -43,15 +43,15 @@ sigma = 10**-2
 thing_name = 'capsules'
 
 
-body_diameter = 4.14*2
+body_diameter = 4.16*2
 cap_diameter = 4.32*2
 body_radius = body_diameter/2
 cap_radius = body_diameter/2
 cap_depth = 6
 half_hole_seperation = body_radius * .25
-tray_depth = 15
+tray_depth = 10
 tray_depth *= 0.5
-tray_side = 75
+tray_side = 50
 wall_thickness=2
 wall_height=tray_depth*2
 
