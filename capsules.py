@@ -45,16 +45,16 @@ thing_name = 'capsules'
 
 #body_diameter = 4.16*2
 cap_diameter = 4.32*2
-body_diameter = cap_diameter
+body_diameter = cap_diameter * .96
 body_radius = body_diameter/2
 cap_radius = body_diameter/2
 cap_depth = 6
 half_hole_seperation = body_radius * .25
 tray_depth = 10
 tray_depth *= 0.5
-tray_side = 50
+tray_side = 87
 wall_thickness=2
-wall_height=tray_depth
+wall_height=tray_depth *2
 
 def space_chunks(chunk_width, width, chunk_sep=None):
     chunk_sep = chunk_sep or chunk_width * 0.25
