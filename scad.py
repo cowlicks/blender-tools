@@ -7,7 +7,7 @@ from math import cos, sin, pi
 import os
 
 def export_stl(name, location=None):
-    location = location or os.path.join(os.path.dirname(os.path.realpath(__file__)), f'{name}.stl')
+    location = location or os.path.join(os.path.dirname(os.path.realpath(__file__)), f'stls/{name}.stl')
     bpy.ops.export_mesh.stl(filepath=location)
 
 def reset_blend():
