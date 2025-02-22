@@ -43,14 +43,14 @@ def obj_diff(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=T
     bpy.context.object.modifiers['Boolean'].operation = 'DIFFERENCE'
     bpy.context.object.modifiers['Boolean'].use_hole_tolerant = use_hole_tolerant
     bpy.context.object.modifiers['Boolean'].use_self = use_self
+    bpy.context.object.modifiers['Boolean'].solver = solver
     bpy.context.object.modifiers["Boolean"].object = b_obj
     bpy.ops.object.modifier_apply(modifier="Boolean")
     if remove_other:
         bpy.data.objects.remove(b_obj, do_unlink=True)
 
+@active_obj
 def obj_intersect(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=True):
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.view_layer.objects.active = a_obj
     bpy.ops.object.modifier_add(type='BOOLEAN')
     bpy.context.object.modifiers['Boolean'].operation = 'INTERSECT'
     bpy.context.object.modifiers['Boolean'].use_hole_tolerant = use_hole_tolerant
@@ -60,9 +60,8 @@ def obj_intersect(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_s
     if remove_other:
         bpy.data.objects.remove(b_obj, do_unlink=True)
 
+@active_obj
 def obj_union(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=True):
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.view_layer.objects.active = a_obj
     bpy.ops.object.modifier_add(type='BOOLEAN')
     bpy.context.object.modifiers['Boolean'].operation = 'UNION'
     bpy.context.object.modifiers['Boolean'].use_hole_tolerant = use_hole_tolerant
@@ -90,10 +89,8 @@ def rotate_around_cursor(obj, rads, axis):
     m = (cursor_loc @ rot_mat @ cursor_loc.inverted())
     obj.matrix_world = m @ obj.matrix_world
 
+@active_obj
 def bevel(obj, offset=1.2, segments=3, affect='EDGES', **kwargs):
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.view_layer.objects.active = obj
-
     bpy.ops.object.mode_set(mode = 'EDIT')
     bpy.ops.mesh.bevel(offset=offset,
                        segments=segments,
@@ -101,7 +98,16 @@ def bevel(obj, offset=1.2, segments=3, affect='EDGES', **kwargs):
                        **kwargs)
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
+@active_obj
+@selected_obj
+def origin_set(obj, type_, center='MEDIAN'):
+    bpy.ops.object.origin_set(type=type_, center=center)
 
+def origin_to_3d_center(obj):
+    origin_set(obj, 'ORIGIN_CURSOR')
+
+def scale(value):
+    return bpy.ops.transform.resize(value=value)
 
 def mirror_axis_i(i):
     bpy.ops.object.duplicate()
@@ -140,6 +146,9 @@ def vert_filter(obj, func):
 
 
 def z_min(obj):
+    return extreme_coordinates(obj)[2][0]
+
+def z_mid(obj):
     return extreme_coordinates(obj)[2][0]
 
 def z_max(obj):
@@ -210,15 +219,21 @@ def set_default_verticies(x: int = 32):
     global DEFAULT_CYLINDER_VERTICES
     DEFAULT_CYLINDER_VERTICES = x
 
-def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 1, 1), vertices=None):
+def cylinder(radius: float = 1, depth: float = 1, location=(0, 0, 0), scale=(1, 1, 1), vertices=None, rotation=(0., 0., 0.)):
     vertices = vertices or DEFAULT_CYLINDER_VERTICES
     bpy.ops.mesh.primitive_cylinder_add(radius=radius,
                                         depth=depth,
                                         location=location,
                                         scale=scale,
                                         enter_editmode=False, align='WORLD',
+                                        rotation=rotation,
                                         vertices=vertices,
                                         )
+    return active()
+
+def sphere(source=None, radius=1.):
+    location = source or (0, 0, 0)
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=radius, location=location, enter_editmode=False, align='WORLD')
     return active()
 
 def cube(size=2, location=(0, 0, 0),
@@ -259,5 +274,40 @@ def duplicate(obj):
     obj.select_set(True)
     bpy.ops.object.duplicate()
     return active()
+
+def make_cone(source, destination, radius, n_vertices=5, name='cone-shape', scene=None):
+    (x, y, *_) = destination
+    radians = (2 * pi * v / n_vertices for v in range(n_vertices))
+    coords = ((x + radius*cos(r), y + radius*sin(r), -.1) for r in radians)
+    coords = chain([source], coords)
+    faces = ((0, (i % n_vertices) + 1, ((i + 1) % n_vertices) + 1) for i in range(n_vertices))
+    faces = chain([[i + 1 for i in range(n_vertices)]], faces)
+
+    mesh = bpy.data.meshes.new(name=name)
+    mesh.from_pydata(list(coords), [], list(faces))
+    mesh.update(calc_edges=True)              # Update mesh with new data
+    mesh.validate(verbose=True)
+
+    scene = scene if scene is not None else bpy.context.scene
+
+    obj = bpy.data.objects.new(name, mesh)
+    scene.collection.objects.link(obj)
+
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    return obj
+
+def select_vertices(obj, chooser):
+    bpy.ops.object.mode_set(mode = 'EDIT')
+    bpy.ops.mesh.select_mode(type='VERT')
+    bpy.ops.mesh.select_all(action = 'DESELECT')
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+
+    for (i, v) in enumerate(get_global_verticies(obj)):
+        if chooser(i, v):
+            obj.data.vertices[i].select = True
+
+    bpy.ops.object.mode_set(mode = 'EDIT')
+
 
 reset_blend()
