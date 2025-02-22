@@ -7,7 +7,7 @@ If you want to design a 3D model and:
 * Have all the power general purpose programming language
 * Have all the power of a mature 3D modeling application
 * Have a tight feedback loop aka "live coding"
-* Use your own file editor
+* Use your favorite text editor
 
 Then I think this is the only existing way to do it, [right?](#Contributing)
 
@@ -18,10 +18,6 @@ The models dimensions (like its diameter) are parameterized by some variables in
 I edit them, save the file, and see the lens update automatically in Blender.
 
 [Screencast from 07-04-2022 03:28:24 PM.webm](https://user-images.githubusercontent.com/598099/177213774-7a372178-d986-40f3-b508-a27124327318.webm)
-
-# This should not exist
-
-This is a hack. Blender could and should make this workflow easier. But, I haven't even asked them too yet. I guess I'll start [here](https://blender.stackexchange.com/questions/1190/best-place-to-put-feature-requests). [Contact me](#Contributing) if you want to help.
 
 # Usage
 
@@ -91,8 +87,13 @@ From a wider perspective, tools are better whene they are agnostic to editor, ID
 
 ## Why write code instead of using Blender's GUI?
 
-Writing a script to generates a model means that my final model is easily parameterized by the measurements that make it up. 
+Writing a script to generates a model means that my final model is easily parameterized by the measurements that make it up.
 
 # Contributing
 
 Email me or create an issue if you have questions comments or concerns :yum:
+
+# This should not exist
+
+This is a hack. Blender could and should make this workflow easier. But, I haven't even asked them too yet. I guess I'll start [here](https://blender.stackexchange.com/questions/1190/best-place-to-put-feature-requests). [Contact me](#Contributing) if you want to help.
+
