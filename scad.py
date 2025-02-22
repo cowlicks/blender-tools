@@ -1,4 +1,5 @@
 '''Tools for building models with Blender's Python API'''
+from itertools import chain
 from mathutils import Matrix
 import bpy
 
@@ -21,9 +22,23 @@ def remove(obj):
 def active():
     return bpy.context.object
 
-def obj_diff(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=True):
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.view_layer.objects.active = a_obj
+def active_obj(func):
+    def wrapper(obj, *args, **kwargs):
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.context.view_layer.objects.active = obj
+        return func(obj, *args, **kwargs)
+    return wrapper
+
+def selected_obj(func):
+    def wrapper(obj, *args, **kwargs):
+        obj.select_set(True)
+        return func(obj, *args, **kwargs)
+    return wrapper
+
+
+
+@active_obj
+def obj_diff(a_obj, b_obj, remove_other=True, use_hole_tolerant=True, use_self=True, solver='EXACT'):
     bpy.ops.object.modifier_add(type='BOOLEAN')
     bpy.context.object.modifiers['Boolean'].operation = 'DIFFERENCE'
     bpy.context.object.modifiers['Boolean'].use_hole_tolerant = use_hole_tolerant
